@@ -2,7 +2,7 @@
 
 from os.path import exists
 from setuptools import setup
-import toolz
+import aiotoolz
 
 setup(name='aiotoolz',
       version=aiotoolz.__version__,

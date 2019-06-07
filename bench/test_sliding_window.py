@@ -1,4 +1,4 @@
-from toolz import sliding_window
+from aiotoolz import sliding_window
 
 seq = range(1000000)
 

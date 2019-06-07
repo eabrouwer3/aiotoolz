@@ -1,4 +1,4 @@
-from toolz import get
+from aiotoolz import get
 
 tuples = [(1, 2, 3) for i in range(100000)]
 

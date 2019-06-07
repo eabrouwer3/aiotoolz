@@ -1,4 +1,4 @@
-from toolz.curried import *
+from aiotoolz.curried import *
 import random
 
 try:

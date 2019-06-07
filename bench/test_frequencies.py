@@ -1,4 +1,4 @@
-from toolz import frequencies, identity
+from aiotoolz import frequencies, identity
 
 
 big_data = list(range(1000)) * 1000

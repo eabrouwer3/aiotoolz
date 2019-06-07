@@ -1,4 +1,4 @@
-from toolz import first, second
+from aiotoolz import first, second
 
 pairs = [(1, 2) for i in range(1000000)]
 

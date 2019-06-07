@@ -1,4 +1,4 @@
-from toolz import pluck
+from aiotoolz import pluck
 
 tuples = [(1, 2, 3) for i in range(100000)]
 less_tuples = [(1, 2, 3) for i in range(100)]

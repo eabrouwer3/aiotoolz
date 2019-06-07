@@ -1,4 +1,4 @@
-from toolz.curried import *
+from aiotoolz.curried import *
 import os
 
 if not os.path.exists('bench/shakespeare.txt'):
@@ -9,6 +9,7 @@ if not os.path.exists('bench/shakespeare.txt'):
 def stem(word):
     """ Stem word to primitive form """
     return word.lower().rstrip(",.!:;'-\"").lstrip("'\"")
+
 
 wordcount = comp(frequencies, map(stem), concat, map(str.split))
 

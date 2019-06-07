@@ -1,4 +1,4 @@
-from toolz import memoize
+from aiotoolz import memoize
 
 
 def test_memoize_no_kwargs():

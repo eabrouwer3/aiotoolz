@@ -1,4 +1,4 @@
-from toolz import get
+from aiotoolz import get
 from functools import partial
 
 

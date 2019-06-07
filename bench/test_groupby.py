@@ -1,4 +1,4 @@
-from toolz import groupby, identity
+from aiotoolz import groupby, identity
 
 
 data = list(range(1000)) * 1000

@@ -1,14 +1,14 @@
 import sys
 import types
-import toolz
+import aiotoolz
 from importlib import import_module
 
 
 class TlzLoader(object):
-    """ Finds and loads ``tlz`` modules when added to sys.meta_path"""
+    """ Finds and loads ``aiotlz`` modules when added to sys.meta_path"""
     def __init__(self):
         self.always_from_toolz = {
-            toolz.pipe,
+            aiotoolz.pipe,
         }
 
     def _load_toolz(self, fullname):
@@ -20,8 +20,8 @@ class TlzLoader(object):
         except ImportError:
             pass
         try:
-            module_name = ''.join(['toolz', dot, submodules])
-            rv['toolz'] = import_module(module_name)
+            module_name = ''.join(['aiotoolz', dot, submodules])
+            rv['aiotoolz'] = import_module(module_name)
         except ImportError:
             pass
         if not rv:
@@ -30,7 +30,7 @@ class TlzLoader(object):
 
     def find_module(self, fullname, path=None):  # pragma: py3 no cover
         package, dot, submodules = fullname.partition('.')
-        if package == 'tlz':
+        if package == 'aiotlz':
             return self
 
     def load_module(self, fullname):  # pragma: py3 no cover
@@ -44,7 +44,7 @@ class TlzLoader(object):
 
     def find_spec(self, fullname, path, target=None):  # pragma: no cover
         package, dot, submodules = fullname.partition('.')
-        if package == 'tlz':
+        if package == 'aiotlz':
             return TlzSpec(fullname, self)
 
     def create_module(self, spec):
@@ -52,17 +52,17 @@ class TlzLoader(object):
 
     def exec_module(self, module):
         toolz_mods = self._load_toolz(module.__name__)
-        fast_mod = toolz_mods.get('cytoolz') or toolz_mods['toolz']
-        slow_mod = toolz_mods.get('toolz') or toolz_mods['cytoolz']
-        module.__dict__.update(toolz.merge(fast_mod.__dict__, module.__dict__))
+        fast_mod = toolz_mods.get('cytoolz') or toolz_mods['aiotoolz']
+        slow_mod = toolz_mods.get('aiotoolz') or toolz_mods['cytoolz']
+        module.__dict__.update(aiotoolz.merge(fast_mod.__dict__, module.__dict__))
         package = fast_mod.__package__
         if package is not None:
             package, dot, submodules = package.partition('.')
-            module.__package__ = ''.join(['tlz', dot, submodules])
+            module.__package__ = ''.join(['aiotlz', dot, submodules])
         if not module.__doc__:
             module.__doc__ = fast_mod.__doc__
 
-        # show file from toolz during introspection
+        # show file from aiotoolz during introspection
         module.__file__ = slow_mod.__file__
 
         for k, v in fast_mod.__dict__.items():
@@ -78,7 +78,7 @@ class TlzLoader(object):
                 and v.__package__ == fast_mod.__name__
             ):
                 package, dot, submodules = v.__name__.partition('.')
-                module_name = ''.join(['tlz', dot, submodules])
+                module_name = ''.join(['aiotlz', dot, submodules])
                 submodule = import_module(module_name)
                 module.__dict__[k] = submodule
 
@@ -97,4 +97,4 @@ class TlzSpec(object):
 
 tlz_loader = TlzLoader()
 sys.meta_path.append(tlz_loader)
-tlz_loader.exec_module(sys.modules['tlz'])
+tlz_loader.exec_module(sys.modules['aiotlz'])

@@ -1,4 +1,4 @@
-from toolz.curried import get
+from aiotoolz.curried import get
 
 
 pairs = [(1, 2) for i in range(100000)]

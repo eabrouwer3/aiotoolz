@@ -4,8 +4,8 @@ import collections
 import operator
 from functools import partial
 from random import Random
-from aiotoolz.compatibility import (map, filterfalse, zip, zip_longest, iteritems,
-                                 filter, Sequence)
+from aiotoolz.compatibility import (map, filterfalse, zip, zip_longest,
+                                    iteritems, filter, Sequence)
 from aiotoolz.utils import no_default
 
 

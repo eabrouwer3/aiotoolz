@@ -1,7 +1,7 @@
 import copy
 import operator
 from aiotoolz.compatibility import (map, zip, iteritems, iterkeys, itervalues,
-                                 reduce)
+                                    reduce)
 
 __all__ = ('merge', 'merge_with', 'valmap', 'keymap', 'itemmap',
            'valfilter', 'keyfilter', 'itemfilter',

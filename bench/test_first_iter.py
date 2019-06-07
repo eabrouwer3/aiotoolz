@@ -1,5 +1,5 @@
 import itertools
-from toolz import first, second
+from aiotoolz import first, second
 
 
 def test_first_iter():

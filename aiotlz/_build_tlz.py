@@ -54,7 +54,8 @@ class TlzLoader(object):
         toolz_mods = self._load_toolz(module.__name__)
         fast_mod = toolz_mods.get('cytoolz') or toolz_mods['aiotoolz']
         slow_mod = toolz_mods.get('aiotoolz') or toolz_mods['cytoolz']
-        module.__dict__.update(aiotoolz.merge(fast_mod.__dict__, module.__dict__))
+        module.__dict__.update(
+            aiotoolz.merge(fast_mod.__dict__, module.__dict__))
         package = fast_mod.__package__
         if package is not None:
             package, dot, submodules = package.partition('.')

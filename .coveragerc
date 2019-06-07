@@ -1,8 +1,8 @@
 [run]
 omit =
-    toolz/tests/test*
-    toolz/*/tests/test*
-    toolz/compatibility.py
+    aiotoolz/tests/test*
+    aiotoolz/*/tests/test*
+    aiotoolz/compatibility.py
 
 [report]
 exclude_lines =

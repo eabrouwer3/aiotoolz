@@ -1,4 +1,4 @@
-package: toolz
+package: aiotoolz
 platform:
   - linux-64
   - linux-32
@@ -6,8 +6,7 @@ platform:
   - win-64
   - win-32
 engine:
-  - python=2.7
-  - python=3.4
+  - python=3.5
 script:
   - conda build conda.recipe
 build_targets:

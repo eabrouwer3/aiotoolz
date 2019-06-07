@@ -132,8 +132,8 @@ We're friendly.
 
 .. |Build Status| image:: https://travis-ci.org/pytoolz/toolz.svg?branch=master
    :target: https://travis-ci.org/pytoolz/toolz
-.. |Coverage Status| image:: https://coveralls.io/repos/pytoolz/toolz/badge.svg?branch=master
-   :target: https://coveralls.io/r/pytoolz/toolz
+.. |Coverage Status| image:: https://coveralls.io/repos/github/eabrouwer3/aiotoolz/badge.svg?branch=master
+   :target: https://coveralls.io/github/eabrouwer3/aiotoolz?branch=master
 .. |Version Status| image:: https://badge.fury.io/py/toolz.svg
    :target: https://badge.fury.io/py/toolz
  

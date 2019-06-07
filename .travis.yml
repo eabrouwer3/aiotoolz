@@ -4,7 +4,7 @@ python:
     - "3.5"
     - "3.6"
 #    - "3.7"
-#    - "pypy"
+    - "pypy"
 
 # Enable 3.7 without globally enabling sudo and dist: xenial for other build jobs
 matrix:
@@ -36,7 +36,7 @@ script:
 
 # load coverage status to https://coveralls.io
 after_success:
-    - if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then pip install coveralls --use-mirrors ; coveralls ; fi
+    - if [[ $TRAVIS_PYTHON_VERSION != pypy* ]]; then pip install coveralls ; coveralls ; fi
 
 notifications:
   email: false

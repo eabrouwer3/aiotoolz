@@ -130,10 +130,10 @@ Community
 See our ``toolz`` `mailing list <https://groups.google.com/forum/#!forum/pytoolz>`__.
 We're friendly.
 
-.. |Build Status| image:: https://travis-ci.org/pytoolz/toolz.svg?branch=master
-   :target: https://travis-ci.org/pytoolz/toolz
+.. |Build Status| image:: https://travis-ci.org/eabrouwer3/aiotoolz.svg?branch=master
+   :target: https://travis-ci.org/eabrouwer3/aiotoolz
 .. |Coverage Status| image:: https://coveralls.io/repos/github/eabrouwer3/aiotoolz/badge.svg?branch=master
    :target: https://coveralls.io/github/eabrouwer3/aiotoolz?branch=master
-.. |Version Status| image:: https://badge.fury.io/py/toolz.svg
-   :target: https://badge.fury.io/py/toolz
+.. |Version Status| image:: image:: https://badge.fury.io/py/aiotoolz.svg
+    :target: https://badge.fury.io/py/aiotoolz
  

@@ -1,11 +1,11 @@
-Toolz
-=====
+aiotoolz
+========
 
 |Build Status| |Coverage Status| |Version Status|
 
-A set of utility functions for iterators, functions, and dictionaries.
+An async port of the wonderful pytoolz/toolz library.
 
-See the PyToolz documentation at https://toolz.readthedocs.io
+See the PyToolz documentation at https://toolz.readthedocs.io and the github page at https://github.com/pytoolz/toolz.
 
 LICENSE
 -------
@@ -15,11 +15,17 @@ New BSD. See `License File <https://github.com/pytoolz/toolz/blob/master/LICENSE
 Install
 -------
 
-``toolz`` is on the Python Package Index (PyPI):
+``aiotoolz`` is not yet on the Python Package Index (PyPI), but soon you can install it like so:
 
 ::
 
-    pip install toolz
+    pip install aiotoolz
+    
+Currently, you can install it like so:
+
+::
+
+    pip install git+https://github.com/eabrouwer3/aiotoolz.git
 
 Structure and Heritage
 ----------------------
@@ -73,21 +79,21 @@ This builds a standard wordcount function from pieces within ``toolz``:
 Dependencies
 ------------
 
-``toolz`` supports Python 2.7 and Python 3.4+ with a common codebase.
+``aiotoolz`` supports Python 3.5+ with a common codebase.
 It is pure Python and requires no dependencies beyond the standard
 library.
 
 It is, in short, a lightweight dependency.
 
 
-CyToolz
--------
+.. CyToolz
+   -------
 
-The ``toolz`` project has been reimplemented in `Cython <http://cython.org>`__.
-The ``cytoolz`` project is a drop-in replacement for the Pure Python
-implementation.
-See `CyToolz GitHub Page <https://github.com/pytoolz/cytoolz/>`__ for more
-details.
+   The ``toolz`` project has been reimplemented in `Cython <http://cython.org>`__.
+   The ``cytoolz`` project is a drop-in replacement for the Pure Python
+   implementation.
+   See `CyToolz GitHub Page <https://github.com/pytoolz/cytoolz/>`__ for more
+   details.
 
 See Also
 --------
@@ -106,11 +112,11 @@ See Also
 Contributions Welcome
 ---------------------
 
-``toolz`` aims to be a repository for utility functions, particularly
+``aiotoolz`` aims to be a repository for utility functions, particularly
 those that come from the functional programming and list processing
 traditions. We welcome contributions that fall within this scope.
 
-We also try to keep the API small to keep ``toolz`` manageable.  The ideal
+We also try to keep the API small to keep ``aiotoolz`` manageable.  The ideal
 contribution is significantly different from existing functions and has
 precedent in a few other functional systems.
 
@@ -121,7 +127,7 @@ for contribution ideas.
 Community
 ---------
 
-See our `mailing list <https://groups.google.com/forum/#!forum/pytoolz>`__.
+See our ``toolz`` `mailing list <https://groups.google.com/forum/#!forum/pytoolz>`__.
 We're friendly.
 
 .. |Build Status| image:: https://travis-ci.org/pytoolz/toolz.svg?branch=master
@@ -130,3 +136,4 @@ We're friendly.
    :target: https://coveralls.io/r/pytoolz/toolz
 .. |Version Status| image:: https://badge.fury.io/py/toolz.svg
    :target: https://badge.fury.io/py/toolz
+ 

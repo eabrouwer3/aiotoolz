@@ -5,7 +5,9 @@ from operator import attrgetter
 from importlib import import_module
 from textwrap import dedent
 
-from .compatibility import PY3, PY34, PYPY
+import paco
+
+from .compatibility import PY3, PYPY
 from .utils import no_default
 
 
@@ -22,7 +24,7 @@ def identity(x):
     return x
 
 
-def thread_first(val, *forms):
+async def thread_first(val, *forms):
     """ Thread value through a sequence of functions/forms
 
     >>> def double(x): return 2*x
@@ -46,22 +48,22 @@ def thread_first(val, *forms):
     See Also:
         thread_last
     """
-    def evalform_front(val, form):
+    async def evalform_front(val, form):
         if callable(form):
-            return form(val)
+            return await form(val)
         if isinstance(form, tuple):
             func, args = form[0], form[1:]
             args = (val,) + args
-            return func(*args)
-    return reduce(evalform_front, forms, val)
+            return await func(*args)
+    return await paco.reduce(evalform_front, forms, val)
 
 
-def thread_last(val, *forms):
+async def thread_last(val, *forms):
     """ Thread value through a sequence of functions/forms
 
     >>> def double(x): return 2*x
     >>> def inc(x):    return x + 1
-    >>> thread_last(1, inc, double)
+    >>> await thread_last(1, inc, double)
     4
 
     If the function expects more than one input you can specify those inputs
@@ -69,7 +71,7 @@ def thread_last(val, *forms):
 
     >>> def add(x, y): return x + y
     >>> def pow(x, y): return x**y
-    >>> thread_last(1, (add, 4), (pow, 2))  # pow(2, add(4, 1))
+    >>> await thread_last(1, (add, 4), (pow, 2))  # pow(2, add(4, 1))
     32
 
     So in general
@@ -85,14 +87,14 @@ def thread_last(val, *forms):
     See Also:
         thread_first
     """
-    def evalform_back(val, form):
+    async def evalform_back(val, form):
         if callable(form):
-            return form(val)
+            return await form(val)
         if isinstance(form, tuple):
             func, args = form[0], form[1:]
             args = args + (val,)
-            return func(*args)
-    return reduce(evalform_back, forms, val)
+            return await func(*args)
+    return await paco.reduce(evalform_back, forms, val)
 
 
 def instanceproperty(fget=None, fset=None, fdel=None, doc=None, classval=None):
@@ -195,9 +197,9 @@ class curry(object):
             func = func.func
 
         if kwargs:
-            self._partial = partial(func, *args, **kwargs)
+            self._partial = paco.partial(func, *args, **kwargs)
         else:
-            self._partial = partial(func, *args)
+            self._partial = paco.partial(func, *args)
 
         self.__doc__ = getattr(func, '__doc__', None)
         self.__name__ = getattr(func, '__name__', '<curry>')
@@ -279,9 +281,9 @@ class curry(object):
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __call__(self, *args, **kwargs):
+    async def __call__(self, *args, **kwargs):
         try:
-            return self._partial(*args, **kwargs)
+            return await self._partial(*args, **kwargs)
         except TypeError as exc:
             if self._should_curry(args, kwargs, exc):
                 return self.bind(*args, **kwargs)
@@ -316,8 +318,8 @@ class curry(object):
     def bind(self, *args, **kwargs):
         return type(self)(self, *args, **kwargs)
 
-    def call(self, *args, **kwargs):
-        return self._partial(*args, **kwargs)
+    async def call(self, *args, **kwargs):
+        return await self._partial(*args, **kwargs)
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -370,7 +372,7 @@ def _restore_curry(cls, func, args, kwargs, userdict, is_decorated):
 
 
 @curry
-def memoize(func, cache=None, key=None):
+async def memoize(func, cache=None, key=None):
     """ Cache a function's result for speedy future evaluation
 
     Considerations:
@@ -431,14 +433,14 @@ def memoize(func, cache=None, key=None):
             def key(args, kwargs):
                 return args
 
-    def memof(*args, **kwargs):
+    async def memof(*args, **kwargs):
         k = key(args, kwargs)
         try:
             return cache[k]
         except TypeError:
             raise TypeError("Arguments to memoized function must be hashable")
         except KeyError:
-            cache[k] = result = func(*args, **kwargs)
+            cache[k] = result = await func(*args, **kwargs)
             return result
 
     try:
@@ -464,9 +466,9 @@ class Compose(object):
         self.funcs = funcs[1:]
 
     def __call__(self, *args, **kwargs):
-        ret = self.first(*args, **kwargs)
+        ret = await self.first(*args, **kwargs)
         for f in self.funcs:
-            ret = f(ret)
+            ret = await f(ret)
         return ret
 
     def __getstate__(self):

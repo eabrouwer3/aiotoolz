@@ -79,11 +79,9 @@ This builds a standard wordcount function from pieces within ``toolz``:
 Dependencies
 ------------
 
-``aiotoolz`` supports Python 3.5+ with a common codebase.
-It is pure Python and requires no dependencies beyond the standard
-library.
-
-It is, in short, a lightweight dependency.
+``aiotoolz`` supports Python 3.5+ with a common codebase. There is one
+dependency, `Paco <https://github.com/h2non/paco>`__, for async versions of
+python's ``map``, ``partial``, ``reduce`` etc. functions.
 
 
 .. CyToolz

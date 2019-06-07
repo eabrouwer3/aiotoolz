@@ -1,5 +1,6 @@
 import copy
 import operator
+import asyncio
 from aiotoolz.compatibility import (map, zip, iteritems, iterkeys, itervalues,
                                     reduce)
 
@@ -40,16 +41,16 @@ def merge(*dicts, **kwargs):
     return rv
 
 
-def merge_with(func, *dicts, **kwargs):
+async def merge_with(func, *dicts, **kwargs):
     """ Merge dictionaries and apply function to combined values
 
     A key may occur in more than one dict, and all values mapped from the key
     will be passed to the function as a list, such as func([val1, val2, ...]).
 
-    >>> merge_with(sum, {1: 1, 2: 2}, {1: 10, 2: 20})
+    >>> await merge_with(sum, {1: 1, 2: 2}, {1: 10, 2: 20})
     {1: 11, 2: 22}
 
-    >>> merge_with(first, {1: 1, 2: 2}, {2: 20, 3: 30})  # doctest: +SKIP
+    >>> await merge_with(first, {1: 1, 2: 2}, {2: 20, 3: 30})  # doctest: +SKIP
     {1: 1, 2: 2, 3: 30}
 
     See Also:
@@ -66,14 +67,14 @@ def merge_with(func, *dicts, **kwargs):
                 result[k] = [v]
             else:
                 result[k].append(v)
-    return valmap(func, result, factory)
+    return await valmap(func, result, factory)
 
 
-def valmap(func, d, factory=dict):
+async def valmap(func, d, factory=dict):
     """ Apply function to values of dictionary
 
     >>> bills = {"Alice": [20, 15, 30], "Bob": [10, 35]}
-    >>> valmap(sum, bills)  # doctest: +SKIP
+    >>> await valmap(sum, bills)  # doctest: +SKIP
     {'Alice': 65, 'Bob': 45}
 
     See Also:
@@ -81,15 +82,15 @@ def valmap(func, d, factory=dict):
         itemmap
     """
     rv = factory()
-    rv.update(zip(iterkeys(d), map(func, itervalues(d))))
+    rv.update(zip(iterkeys(d), await map(func, itervalues(d))))
     return rv
 
 
-def keymap(func, d, factory=dict):
+async def keymap(func, d, factory=dict):
     """ Apply function to keys of dictionary
 
     >>> bills = {"Alice": [20, 15, 30], "Bob": [10, 35]}
-    >>> keymap(str.lower, bills)  # doctest: +SKIP
+    >>> await keymap(str.lower, bills)  # doctest: +SKIP
     {'alice': [20, 15, 30], 'bob': [10, 35]}
 
     See Also:
@@ -97,15 +98,15 @@ def keymap(func, d, factory=dict):
         itemmap
     """
     rv = factory()
-    rv.update(zip(map(func, iterkeys(d)), itervalues(d)))
+    rv.update(zip(await map(func, iterkeys(d)), itervalues(d)))
     return rv
 
 
-def itemmap(func, d, factory=dict):
+async def itemmap(func, d, factory=dict):
     """ Apply function to items of dictionary
 
     >>> accountids = {"Alice": 10, "Bob": 20}
-    >>> itemmap(reversed, accountids)  # doctest: +SKIP
+    >>> await itemmap(reversed, accountids)  # doctest: +SKIP
     {10: "Alice", 20: "Bob"}
 
     See Also:
@@ -113,16 +114,16 @@ def itemmap(func, d, factory=dict):
         valmap
     """
     rv = factory()
-    rv.update(map(func, iteritems(d)))
+    rv.update(await map(func, iteritems(d)))
     return rv
 
 
-def valfilter(predicate, d, factory=dict):
+async def valfilter(predicate, d, factory=dict):
     """ Filter items in dictionary by value
 
     >>> iseven = lambda x: x % 2 == 0
     >>> d = {1: 2, 2: 3, 3: 4, 4: 5}
-    >>> valfilter(iseven, d)
+    >>> await valfilter(iseven, d)
     {1: 2, 3: 4}
 
     See Also:
@@ -132,17 +133,17 @@ def valfilter(predicate, d, factory=dict):
     """
     rv = factory()
     for k, v in iteritems(d):
-        if predicate(v):
+        if await predicate(v):
             rv[k] = v
     return rv
 
 
-def keyfilter(predicate, d, factory=dict):
+async def keyfilter(predicate, d, factory=dict):
     """ Filter items in dictionary by key
 
     >>> iseven = lambda x: x % 2 == 0
     >>> d = {1: 2, 2: 3, 3: 4, 4: 5}
-    >>> keyfilter(iseven, d)
+    >>> await keyfilter(iseven, d)
     {2: 3, 4: 5}
 
     See Also:
@@ -152,15 +153,16 @@ def keyfilter(predicate, d, factory=dict):
     """
     rv = factory()
     for k, v in iteritems(d):
-        if predicate(k):
+        if await predicate(k):
             rv[k] = v
     return rv
 
 
-def itemfilter(predicate, d, factory=dict):
+async def itemfilter(predicate, d, factory=dict):
     """ Filter items in dictionary by item
 
-    >>> def isvalid(item):
+    >>> async def isvalid(item):
+    ...     await asyncio.sleep(1)  # Some long running IO function
     ...     k, v = item
     ...     return k % 2 == 0 and v < 4
 
@@ -175,7 +177,7 @@ def itemfilter(predicate, d, factory=dict):
     """
     rv = factory()
     for item in iteritems(d):
-        if predicate(item):
+        if await predicate(item):
             k, v = item
             rv[k] = v
     return rv
@@ -217,7 +219,7 @@ def dissoc(d, *keys):
     return d2
 
 
-def assoc_in(d, keys, value, factory=dict):
+async def assoc_in(d, keys, value, factory=dict):
     """ Return a new dict with new, potentially nested, key value pair
 
     >>> purchase = {'name': 'Alice',
@@ -229,10 +231,12 @@ def assoc_in(d, keys, value, factory=dict):
      'name': 'Alice',
      'order': {'costs': [0.25, 1.00], 'items': ['Apple', 'Orange']}}
     """
-    return update_in(d, keys, lambda x: value, value, factory)
+    async def ret(x):
+        return value
+    return await update_in(d, keys, ret, value, factory)
 
 
-def update_in(d, keys, func, default=None, factory=dict):
+async def update_in(d, keys, func, default=None, factory=dict):
     """ Update value in a (potentially) nested dictionary
 
     inputs:
@@ -248,32 +252,32 @@ def update_in(d, keys, func, default=None, factory=dict):
     specified by the keys, with the innermost value set to func(default).
 
     >>> inc = lambda x: x + 1
-    >>> update_in({'a': 0}, ['a'], inc)
+    >>> await update_in({'a': 0}, ['a'], inc)
     {'a': 1}
 
     >>> transaction = {'name': 'Alice',
     ...                'purchase': {'items': ['Apple', 'Orange'],
     ...                             'costs': [0.50, 1.25]},
     ...                'credit card': '5555-1234-1234-1234'}
-    >>> update_in(transaction, ['purchase', 'costs'], sum) # doctest: +SKIP
+    >>> await update_in(transaction, ['purchase', 'costs'], sum) # doctest: +SKIP
     {'credit card': '5555-1234-1234-1234',
      'name': 'Alice',
      'purchase': {'costs': 1.75, 'items': ['Apple', 'Orange']}}
 
     >>> # updating a value when k0 is not in d
-    >>> update_in({}, [1, 2, 3], str, default="bar")
+    >>> await update_in({}, [1, 2, 3], str, default="bar")
     {1: {2: {3: 'bar'}}}
-    >>> update_in({1: 'foo'}, [2, 3, 4], inc, 0)
+    >>> await update_in({1: 'foo'}, [2, 3, 4], inc, 0)
     {1: 'foo', 2: {3: {4: 1}}}
     """
     assert len(keys) > 0
     k, ks = keys[0], keys[1:]
     if ks:
-        return assoc(d, k, update_in(d[k] if (k in d) else factory(),
-                                     ks, func, default, factory),
+        return assoc(d, k, await update_in(d[k] if (k in d) else factory(),
+                                           ks, func, default, factory),
                      factory)
     else:
-        innermost = func(d[k]) if (k in d) else func(default)
+        innermost = await func(d[k]) if (k in d) else await func(default)
         return assoc(d, k, innermost, factory)
 
 

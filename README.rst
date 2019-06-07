@@ -134,6 +134,6 @@ We're friendly.
    :target: https://travis-ci.org/eabrouwer3/aiotoolz
 .. |Coverage Status| image:: https://coveralls.io/repos/github/eabrouwer3/aiotoolz/badge.svg?branch=master
    :target: https://coveralls.io/github/eabrouwer3/aiotoolz?branch=master
-.. |Version Status| image:: image:: https://badge.fury.io/py/aiotoolz.svg
+.. |Version Status| image:: https://badge.fury.io/py/aiotoolz.svg
     :target: https://badge.fury.io/py/aiotoolz
  

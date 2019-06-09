@@ -18,7 +18,7 @@ env:
 
 # command to install dependencies
 install:
-    - pip install coverage pycodestyle pytest
+    - pip install coverage pycodestyle pytest pytest-asyncio paco
 
 # command to run tests
 # require 100% coverage (not including test files) to pass Travis CI test

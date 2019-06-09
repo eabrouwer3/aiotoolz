@@ -1,92 +1,102 @@
 import platform
 
+import paco
+import pytest
+
 from aiotoolz.functoolz import (thread_first, thread_last, memoize, curry,
-                             compose, pipe, complement, do, juxt, flip, excepts)
+                                compose, pipe, complement, do, juxt, flip,
+                                excepts)
 from operator import add, mul, itemgetter
 from aiotoolz.utils import raises
 from functools import partial
 
 
-def iseven(x):
+async def iseven(x):
     return x % 2 == 0
 
 
-def isodd(x):
+async def isodd(x):
     return x % 2 == 1
 
 
-def inc(x):
+async def inc(x):
     return x + 1
 
 
-def double(x):
+async def double(x):
     return 2 * x
 
 
-def test_thread_first():
-    assert thread_first(2) == 2
-    assert thread_first(2, inc) == 3
-    assert thread_first(2, inc, inc) == 4
-    assert thread_first(2, double, inc) == 5
-    assert thread_first(2, (add, 5), double) == 14
+@pytest.mark.asyncio
+async def test_thread_first():
+    assert await thread_first(2) == 2
+    assert await thread_first(2, inc) == 3
+    assert await thread_first(2, inc, inc) == 4
+    assert await thread_first(2, double, inc) == 5
+    assert await thread_first(2, (add, 5), double) == 14
 
 
-def test_thread_last():
-    assert list(thread_last([1, 2, 3], (map, inc), (filter, iseven))) == [2, 4]
-    assert list(thread_last([1, 2, 3], (map, inc), (filter, isodd))) == [3]
-    assert thread_last(2, (add, 5), double) == 14
+@pytest.mark.asyncio
+async def test_thread_last():
+    assert list(await thread_last([1, 2, 3], (map, inc), (filter, iseven))) == [2, 4]
+    assert list(await thread_last([1, 2, 3], (map, inc), (filter, isodd))) == [3]
+    assert await thread_last(2, (add, 5), double) == 14
 
 
-def test_memoize():
+@pytest.mark.asyncio
+async def test_memoize():
     fn_calls = [0]  # Storage for side effects
 
-    def f(x, y):
+    async def f(x, y):
         """ A docstring """
         fn_calls[0] += 1
         return x + y
     mf = memoize(f)
 
-    assert mf(2, 3) is mf(2, 3)
+    assert await mf(2, 3) is await mf(2, 3)
     assert fn_calls == [1]  # function was only called once
     assert mf.__doc__ == f.__doc__
-    assert raises(TypeError, lambda: mf(1, {}))
+    assert raises(TypeError, lambda: await mf(1, {}))
 
 
-def test_memoize_kwargs():
+@pytest.mark.asyncio
+async def test_memoize_kwargs():
     fn_calls = [0]  # Storage for side effects
 
-    def f(x, y=0):
+    async def f(x, y=0):
         return x + y
 
     mf = memoize(f)
 
-    assert mf(1) == f(1)
-    assert mf(1, 2) == f(1, 2)
-    assert mf(1, y=2) == f(1, y=2)
-    assert mf(1, y=3) == f(1, y=3)
+    assert await mf(1) == await f(1)
+    assert await mf(1, 2) == await f(1, 2)
+    assert await mf(1, y=2) == await f(1, y=2)
+    assert await mf(1, y=3) == await f(1, y=3)
 
 
-def test_memoize_curried():
+@pytest.mark.asyncio
+async def test_memoize_curried():
     @curry
-    def f(x, y=0):
+    async def f(x, y=0):
         return x + y
 
-    f2 = f(y=1)
+    f2 = await f(y=1)
     fm2 = memoize(f2)
 
-    assert fm2(3) == f2(3)
-    assert fm2(3) == f2(3)
+    assert await fm2(3) == await f2(3)
+    assert await fm2(3) == await f2(3)
 
 
-def test_memoize_partial():
-    def f(x, y=0):
+@pytest.mark.asyncio
+async def test_memoize_partial():
+    async def f(x, y=0):
         return x + y
 
-    f2 = partial(f, y=1)
+    f2 = paco.partial(f, y=1)
     fm2 = memoize(f2)
 
-    assert fm2(3) == f2(3)
-    assert fm2(3) == f2(3)
+    assert await fm2(3) == await f2(3)
+    assert await fm2(3) == await f2(3)
 
 
 def test_memoize_key_signature():
